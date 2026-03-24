@@ -68,6 +68,8 @@ double max_frequency = 100.0;
 double marker_size;
 double max_new_marker_error;
 double max_track_error;
+std::string markerFrame_;
+
 std::string cam_image_topic;
 std::string cam_info_topic;
 std::string output_frame;
@@ -142,7 +144,8 @@ void getCapCallback(const sensor_msgs::ImageConstPtr& image_msg)
         }
 
         // Publish the transform from the camera to the marker
-        std::string markerFrame = "ar_marker_";
+        // std::string markerFrame = "ar_marker_";
+        std::string markerFrame = markerFrame_;
         std::stringstream out;
         out << id;
         std::string id_string = out.str();
@@ -243,6 +246,7 @@ void configCallback(ar_track_alvar::ParamsConfig& config, uint32_t level)
   marker_size = config.marker_size;
   max_new_marker_error = config.max_new_marker_error;
   max_track_error = config.max_track_error;
+  // markerFrame_ = config.marker_prefix;
 }
 
 void enableCallback(const std_msgs::BoolConstPtr& msg)
@@ -301,6 +305,7 @@ int main(int argc, char* argv[])
     pn.setParam("max_frequency", max_frequency);  // in case it was not set.
     pn.param("marker_resolution", marker_resolution, 5);
     pn.param("marker_margin", marker_margin, 2);
+    pn.param<std::string>("marker_prefix", markerFrame_, "ar_marker_");
     if (!pn.getParam("output_frame", output_frame))
     {
       ROS_ERROR("Param 'output_frame' has to be set.");
